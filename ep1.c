@@ -1,6 +1,19 @@
+/*
+INTEGRANTES DA EQUIPE:
+
+ANA LIDIA LISBOA
+GABRIEL FELICIANO
+LETICIA SAMPAIO
+MARINA BRASIL
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "calcnum.h"
+
+void conversao();
+void sistemaLinear();
+void eqAlgebrica();
 
 int main () {
 
@@ -41,3 +54,15 @@ int main () {
     while (comando != 'F');
     
 }
+
+void conversao() {
+    printf("teste1");
+};
+
+void sistemaLinear() {
+    printf("teste2");
+};
+
+void eqAlgebrica() {
+    printf("teste3");
+};
