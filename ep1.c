@@ -22,7 +22,7 @@ int main () {
     double num_conv = 0.0;
 
     do {
-        printf("\n==== MENU ====\n");
+        printf("\n\n==== MENU ====\n");
         printf("'C' - Conversao\n'S' - Sistema Linear\n'E' - Equacao Algebrica\n'F' - Finalizar\n");
         printf("Digite a opcao desejada: ");
         scanf(" %c%*[^\n]", &comando); // recebe o comando e limpa o buffer
@@ -74,6 +74,13 @@ void conversao(double num) {
     int numBinarioInt[32]; // parte inteira do numero binario
     int numBinarioFrac[32]; // parte fracionaria do numero binario
 
+    char isSigned = 0;
+
+    if(num < 0.0) {
+        isSigned = 1; 
+        num = -num;
+    }
+
     int n = (int)num;
     // printf("%d", n);
     double m = num - n;
@@ -89,6 +96,7 @@ void conversao(double num) {
  
     // imprime a parte inteira em ordem inversa
     printf("Binario: ");
+    if(isSigned) printf("-");
     for (int j = i - 1; j >= 0; j--)
         printf("%d", numBinarioInt[j]);
 
@@ -117,19 +125,63 @@ void conversao(double num) {
     double div_int  = ceil(i/3.0); // encontra quantos conjuntos de 3 existem no inteiro
     double div_frac = ceil(k/3.0); // encontra quantos conjuntos de 3 existem na fracao
 
-    // fazer for pra pegar de 3 em 3 e comparar com a tabela de conversao e armazenar no numOctalInt
-    // for(int j = div_int-1; j >= 0; j--) {
-    //
-    // }
+    n = (int)num;
+    m = num - n;
 
-    // fazer outro for para imprimir o numOctalInt
+    int j = 0;
+    while(n) {
+        numOctalInt[j++] = (n & 0b111);
+        n >>= 3;
+    }
+    printf("\nOctal: ");
+    if(isSigned) printf("-");
+    for (j = div_int - 1; j >= 0; j--)
+        printf("%d", numOctalInt[j]);
 
-    // fazer a mesma logica pra parte fracionaria
+    j = 0;
+    while(m && j < 20) {
+        m *= 8;
+        numOctalFrac[j++] = (int)m;
+        m = m - (int)m;
+    } 
+    printf(".");
+
+    for (j = 0; j < div_frac; j++)
+        printf("%d", numOctalFrac[j]);
+
 
     // ----------------------- CONVERSAO HEXADECIMAL --------------------------------//
 
-    // usar a mesma logica da conversao octal, mas separar de 4 em 4
+    // vetor para salvar o numero octal
+    int numHexaInt[32]; // parte inteira do numero hexadecimal
+    int numHexaFrac[32]; // parte fracionaria do numero hexadecimal
 
+    div_int  = ceil(i/4.0); // encontra quantos conjuntos de 4 existem no inteiro
+    div_frac = ceil(k/4.0); // encontra quantos conjuntos de 4 existem na fracao
+
+    n = (int)num;
+    m = num - n;
+
+    int q = 0;
+    while(n) {
+        numHexaInt[q++] = (n & 0b1111);
+        n >>= 4;
+    }
+    printf("\nHexadecimal: ");
+    if(isSigned) printf("-");
+    for (q = div_int - 1; q >= 0; q--)
+        printf("%X", numHexaInt[q]);
+
+    q = 0;
+    while(m && q < 20) {
+        m *= 16;
+        numHexaFrac[q++] = (int)m;
+        m = m - (int)m;
+    } 
+    printf(".");
+
+    for (q = 0; q < div_frac; q++)
+        printf("%X", numHexaFrac[q]);
     
 };
 
