@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+//função que aloca matriz
+double** alocaMatriz(int l, int c){
+    int i, j;
+    double **m;
+    m = malloc(sizeof(double*) * l);
+    if(m == NULL)
+        return NULL;
+    for(i=0;i<l;i++){
+        m[i] = malloc(sizeof(double)*c);
+        if(m[i] == NULL){
+            for (j = 0; j < i; j++)
+                free(m[j]);
+            free(m);
+            return NULL;
+        }
+    }
+    return m;
+}
+//função que imprime matriz
+void imprimeMatriz(double **m, int l, int c){
+    int i;
+    int j;
+    for(i=0; i < l; i++){
+        for (j = 0; j < c; j++){
+            printf("%9.3lf \n", m[i][j]);
+        }
+        printf("\n");
+    }
+}
+//função que aloca vetor
+double* alocaVetor(int c){
+    double *m;
+    m = malloc(sizeof(double) * c);
+    if(m == NULL)
+        return NULL;
+    return m;
+}
+//função que verifica os valores digitados do polinomio
+void leMatrizLagrange(double **m, int l, int c){
+    int i = 0, j;
+    do {
+        printf("Informe A%d : ", c-i-1);
+        scanf(" %lf", &m[0][0]);
+        if(m[0][0] <= 0) //verifica se An é positivo e não nulo
+            printf("Lembrar: Termo A%d obrigatoriamente positivo e nao-nulo.\n", c-i-1);
+    } while(m[0][0] <= 0);
+
+    for (i = 1; i < c-1; i++){
+        printf("Informe A%d: ", c-i-1);
+        scanf(" %lf", &m[0][i]);
+    }
+
+    do {
+        printf("Informe A%d : ", 0);
+        scanf(" %lf", &m[0][c-1]);
+        if(m[0][c-1] == 0) //verifica se A0 é não nulo
+            printf("Lembrar: A0 obrigatoriamente diferente de 0.\n");
+    } while(m[0][c-1] == 0);
+
+    m[0][c] = 0; m[0][c+1] = 0;
+
+    for(i=1; i < l; i++){
+        for(j=0; j<c+2; j++) {
+            m[i][j] = 0;
+        }
+    }
+    imprimeMatriz(m,l,c);
+}
+//============================ METODO DE LAGRANGE ============================//
+//função que pede o grau do polinomio
+int perguntaGrauEquacao() {
+    int grauEq;
+    do {
+        printf("Informe grau da equação: ");
+        scanf(" %d", &grauEq);
+        printf("\n");
+    } while(grauEq < 0);
+    return grauEq;
+}
+//metodo de lagrange
+void metodoDeLagrange() {
+    int i, j;
+    int mTam  = perguntaGrauEquacao() + 1;
+    double** ml = alocaMatriz(4, mTam + 2);
+    double* limites = alocaVetor(4);
+
+    leMatrizLagrange(ml, 1, mTam);
+
+    for(i=0; i<mTam; i++) {
+        ml[1][mTam-1-i] = ml[0][i];
+        ml[2][i] = i%2==0 ? ml[0][i] : -1*ml[0][i];
+        ml[3][mTam-1-i] = i%2==0 ? ml[0][i] : -1*ml[0][i];
+    }
+
+    imprimeMatriz(ml, 4, mTam);
+
+    //calculando o k e b respectivamente
+    for(j=0; j<4; j++) {
+        for(i=0; i<mTam; i++) {
+            ml[j][mTam] = ((ml[j][i] < 0) && ((mTam-i-1) > ml[j][mTam])) ? (mTam-i-1) : ml[j][mTam];
+            ml[j][mTam+1] = (ml[j][i] < ml[j][mTam+1]) ? ml[j][i] : ml[j][mTam+1];
+        }
+
+        ml[j][mTam+1] = fabs(ml[j][mTam+1]);
+    }
+
+    //calculando os limites
+    for(i=0; i<4; i++) {
+        limites[i] = (1.0 + pow(ml[i][mTam+1]/ml[i][0], 1.0/(mTam-1-ml[i][mTam]))) * (i<2 ? 1 : -1);
+    }
+
+    printf("Os limites para a equacao sao:\n");
+    printf("Superiores: %.4f  <= x <=  %.4f\n", 1.0/limites[1], limites[0]);
+    printf("Inferiores: %.4f <= x <= %.4f\n", limites[2], 1.0/limites[3]);
+}
+//============================ METODO DE LAGRANGE ============================//
+main(){
+      metodoDeLagrange();
+}
